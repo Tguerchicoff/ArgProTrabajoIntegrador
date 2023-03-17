@@ -24,11 +24,20 @@ public class Pronostico {
 		int puntos = 0;
 		if(partido.resultado(equipo) == resultado) {
 			
-			puntos =1;
+			puntos =5;
 		}
 		return puntos;
 	}
-
+	
+	public boolean exito() {
+		boolean exito = false;
+		if(partido.resultado(equipo) == resultado) {
+			exito = true;
+		}
+		return exito;
+	}
+	
+	
 	@Override
 	public String toString() {
 		return "Pronostico [partido=" + partido + ", equipo=" + equipo + ", resultado=" + resultado + "]";

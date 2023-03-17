@@ -6,6 +6,7 @@ public class Persona {
 	private String nombre;
 	private ArrayList<Pronostico> pronosticos;
 	private int puntos;
+	private int cantAciertos;
 	
 	
 	public Persona(String nombre) {
@@ -21,6 +22,9 @@ public class Persona {
 	private void puntos() {
 		for (Pronostico pronostico : pronosticos) {
 			this.puntos += pronostico.puntos();
+			if(pronostico.exito()) {
+				cantAciertos++;
+			}
 		}
 
 	}
@@ -30,13 +34,14 @@ public class Persona {
 	}
 	
 	public void resultado() {
-		puntos();
-		System.out.println("El pronostico de: " + this.nombre + " es de: " + this.puntos);
+		puntos(); 
+		System.out.println(nombre + " puntos=" + puntos + " pronosticos:" + this.pronosticos.size() + " y la cantidad aciertos: " + this.cantAciertos + " exito:");
 	}
+	
 
 	@Override
 	public String toString() {
-		return "Persona [nombre=" + nombre + ", pronosticos=" + pronosticos + ", puntos=" + puntos + " pronosticos:" + this.pronosticos.size() ;
+		return nombre;
 	}
 	
 	
