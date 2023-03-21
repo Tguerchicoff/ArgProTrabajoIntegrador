@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 
 public class Programa2 {
-	Scanner sc = new Scanner(System.in);
+	
 	private ArrayList<Equipo> equipos;
 	private ArrayList<Ronda> fase;
 	private ArrayList<Persona> personas;
@@ -20,6 +20,10 @@ public class Programa2 {
 	private int PuntosRachaRonda;
 	private int PuntosRachaFase;
 	
+	Scanner sc = new Scanner(System.in);
+	Scanner input = new Scanner(System.in);
+	Scanner scanR;
+	Scanner scanP;
 	
 	public Programa2() {
 		this.equipos = new ArrayList<>();
@@ -27,41 +31,88 @@ public class Programa2 {
 		this.personas = new ArrayList<>();
 	}
 	
-	
 	public void inicializar() {
 		solicitarValoresResultados();
 		solicitarResultados();
 		solicitarPronostico();
-		
-
+		cerrarScanners();
 		
 	}
 
+	
+	private void solicitarResultados() {
+		
+		System.out.println("Ingrese el path de los resultados: ");
+		resultadosFile = sc.nextLine();	
+		File resul = new File(resultadosFile);
+		try {
+			scanR = new Scanner(resul);
+			Ronda nuevaRonda = new Ronda(contador);
+			contador++;
+			while(scanR.hasNextLine()) {
+				//ESCANEO LA LINEA
+				String linea = scanR.nextLine();
+				//GENERO UN ARRAY
+				String[] separado = new String[4];
+				//SEPARO POR COMAS EN EL ARRAY, OCUPANDO EL TOTAL DE LAS POSICIONES
+				separado = linea.split("\\s*,\\s*");
+				if(verificarArray(separado)) {
+					//ESTE METODO CREA EL EQUIPO, Y SI YA EXISTE NO HACE NADA	
+					agregarEquipo(separado[1]);
+					agregarEquipo(separado[3]) ;
+					//VERIFICO (SOLICITADO) QUE SE INGRESEN INT EN LA CANT DE GOLES
+					if(esInt(separado[0])&& esInt(separado[2])) {	
+						Partido parti = new Partido(separado[0], darEquipo(separado[1]), separado[2], darEquipo(separado[3]));
+						//CREO EL PARTIDO Y LO AGREGO A LA RONDA
+						nuevaRonda.agregarPartido(parti);
+						}else {
+							System.out.println("Ingresaste valores que no son enteros loko!!");
+						}
+				}else {
+					System.out.println("Datos incorrectos, por favor verifique");
+				}
+			}
+			//AGREGO LA RONDA A LA FASE (CONJUNTO DE RONDAS)
+			fase.add(nuevaRonda);
+			scanR.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Ingresaste algo mal..." + e.getMessage());
+		}
+		
+		
+
+	}
 	
 	private void solicitarPronostico() {
 		try {
 		System.out.println("Ingrese el path de los pronosticos: ");
 		pronosticosFile = sc.nextLine();
 		File prono = new File(pronosticosFile);
-			Scanner scanP = new Scanner(prono);
+			scanP = new Scanner(prono);
 			while(scanP.hasNextLine()) {
 				
-				//scaneo la linea
+				//ESCANEO LA LINEA
 				String linea = scanP.nextLine();
-				//genero el array que necesito
+				//GENERO UN ARRAY
 				String[] separadoP = new String[4];
-				//spliteo la linea y la agrego al array
+				//SEPARO POR COMAS EN EL ARRAY, OCUPANDO EL TOTAL DE LAS POSICIONES
 				separadoP = linea.split("\\s*,\\s*");
+				//VERIFICO QUE LA FASE TENGA POR LO MENOS 1 RONDA
 				if(!fase.isEmpty()) {
+					//VERIFICO QUE EL ARRAY CONTENGA LA CANTIDAD DE DATOS QUE NECESITO
 					if(verificarArray(separadoP)) {
+						//BUSCO EL PARTIDO A PARTIR DE LOS 2 EQUIPOS PARTICIPANTES
 					if(buscarPartido(separadoP[0],separadoP[2]) != null) {
 						Partido p = buscarPartido(separadoP[0],separadoP[2]);
-						//if(p.equipoParticipa(separadoP[0])) {
-						// si los equipos existen genero el partido
+						
+						// SI EL PARTIDO EXITE GENERO EL PRONOSTICO
 						Pronostico pronostic = new Pronostico(p, darEquipo(separadoP[0]), separadoP[1]);
+						// SI LA PERSONA NO EXISTE LA CREO
 						if(buscarPersona(separadoP[3])==null) {
+							
 							agregarPersona(separadoP[3]);
 						}
+						//CARGO EL PRONOSTICO A SU DUENIO
 						cargarPronosticoAPersona(separadoP[3], pronostic);
 						}else {
 							System.out.println("El equipo no participa de tal partido");
@@ -73,60 +124,14 @@ public class Programa2 {
 						System.out.println("Partido inexsistente, por favor verifique");
 					}
 				}
-			
-
 		} catch (FileNotFoundException e) {
 			System.out.println("Ingresaste algo mal..." + e.getMessage());
 		}
 	}
-		
-
-	private void solicitarResultados() {
-		boolean seguir = true;
-		
-		System.out.println("Ingrese el path de los resultados: ");
-		resultadosFile = sc.nextLine();	
-		File resul = new File(resultadosFile);
-		try {
-			Scanner scanR = new Scanner(resul);
-			Ronda nuevaRonda = new Ronda(contador);
-			contador++;
-			while(scanR.hasNextLine()) {
-				//scaneo la linea
-				String linea = scanR.nextLine();
-				//genero el array que necesito
-				String[] separado = new String[4];
-				//spliteo la linea y la agrego al array
-				separado = linea.split("\\s*,\\s*");
-				if(verificarArray(separado)) {
-						if(buscarEquipo(separado[1]) && buscarEquipo(separado[3])) {
-							if(esInt(separado[0])&& esInt(separado[2])) {	
-							// si los equipos existen genero el partido
-							Partido parti = new Partido(separado[0], darEquipo(separado[1]), separado[2], darEquipo(separado[3]));
-							nuevaRonda.agregarPartido(parti);
-							}else {
-								System.out.println("Ingresaste valores que no son enteros loko!!");
-							}
-
-					
-						}else {
-							System.out.println("Alguno de los equipo es inexsistente, por favor verifique");
-						}
-				}else {
-					System.out.println("Datos incorrectos, por favor verifique");
-				}
-			}
-			fase.add(nuevaRonda);
-		} catch (FileNotFoundException e) {
-			System.out.println("Ingresaste algo mal..." + e.getMessage());
-		}
-
-	}
-	
 	
 	public void solicitarValoresResultados() {
-		Scanner input = new Scanner(System.in);
 		
+		//PIDE LOS VALORES DE LOS DISTINTOS TIPOS DE PUNTOS (SOLICITADO)
 		System.out.println("Ingrese el valor de cada resultado ganador");
 		ResultadoEnum.ganador.setValor(input.nextInt());
 		
@@ -188,7 +193,7 @@ public class Programa2 {
 				if(r.cantPartidos() <= pp.getRacha()) {
 					pp.setPuntos(pp.getPuntos() + this.PuntosRachaRonda);
 				}
-				if(sumaRondas == pp.getRacha()) {
+				if((this.fase.size() > 1) && (sumaRondas == pp.getRacha())) {
 					pp.setPuntos(pp.getPuntos() + this.PuntosRachaFase);
 				}
 			}
@@ -263,6 +268,16 @@ public class Programa2 {
 		return buscada;
 	}
 	
+	public void agregarEquipo(String nombre) {
+		
+		if(!buscarEquipo(nombre)) {
+			Equipo equi = new Equipo(nombre, "A confirmar");
+			equipos.add(equi);
+		}else {
+		 System.out.println("El equipo ya esta registrado");
+		}
+	}
+	
 	
 	public void agregarEquipo(Equipo e) {
 		if(!buscarEquipo(e.getNombre())) {
@@ -302,6 +317,15 @@ public class Programa2 {
 		}
 		return encontrado;
 	}
+	
+	private void cerrarScanners() {
+		//cierro todos los scanners que utilice en el programa
+		sc.close();
+		input.close();
+		scanR.close();
+		scanP.close();
+	}
+	
 }	
 	
 	
