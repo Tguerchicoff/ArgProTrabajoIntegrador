@@ -20,7 +20,7 @@ public class Main2 {
 		pr2.agregarEquipo(Mexico);
 		
 		pr2.mostrarEquipos();
-		pr2.solicitarPaths();
+		pr2.inicializar();
 		
 		pr2.jugar();
 	}

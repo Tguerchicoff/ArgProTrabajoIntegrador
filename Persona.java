@@ -7,7 +7,7 @@ public class Persona {
 	private ArrayList<Pronostico> pronosticos;
 	private int puntos;
 	private int cantAciertos;
-	
+	private int racha;
 	
 	public Persona(String nombre) {
 		this.nombre = nombre;
@@ -18,15 +18,38 @@ public class Persona {
 		pronosticos.add(p);
 	}
 	
+	public void  jugar() {
+		puntos();
+	}
+	
 	
 	private void puntos() {
 		for (Pronostico pronostico : pronosticos) {
 			this.puntos += pronostico.puntos();
 			if(pronostico.exito()) {
 				cantAciertos++;
+				racha++;
+			}else {
+				racha = 0;
 			}
 		}
 
+	}
+	
+	public int getPuntos() {
+		return this.puntos;
+	}
+	
+	public int getCantAciertos() {
+		return this.cantAciertos;
+	}
+	
+	public void setPuntos(int nuevosPuntos) {
+		this.puntos = nuevosPuntos;
+	}
+	
+	public int getRacha() {
+		return this.racha;
 	}
 	
 	public String getNombre() {
@@ -35,7 +58,7 @@ public class Persona {
 	
 	public void resultado() {
 		puntos(); 
-		System.out.println(nombre + " puntos=" + puntos + " pronosticos:" + this.pronosticos.size() + " y la cantidad aciertos: " + this.cantAciertos + " exito:");
+		System.out.println(nombre + " puntos:" + puntos +"  cantidad aciertos: " + this.cantAciertos);
 	}
 	
 

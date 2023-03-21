@@ -17,6 +17,15 @@ public class Ronda {
 		partidos.add(p);
 	}
 	
+	public int cantPartidos() {
+		int cantidad = 0;
+		if(this.partidos != null) {
+			cantidad = this.partidos.size();		
+		}
+		return cantidad;
+	}
+	
+	
 	public Partido buscarPartido(String e1, String e2) {
     	Partido parti = null;	
     	
@@ -29,11 +38,13 @@ public class Ronda {
     	return parti;
 	}
 	
+	public int getNro() {
+		return this.nro;
+	}
 	
-	
-	public int puntos() {
+	public int puntos(Partido parti, ResultadoEnum resul) {
 		int puntos = 0;
-		
+
 		return puntos;
 	}
 }

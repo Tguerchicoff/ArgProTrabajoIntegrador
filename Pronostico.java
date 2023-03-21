@@ -23,8 +23,7 @@ public class Pronostico {
 	public int puntos() {
 		int puntos = 0;
 		if(partido.resultado(equipo) == resultado) {
-			
-			puntos =5;
+			puntos = 5;
 		}
 		return puntos;
 	}

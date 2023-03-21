@@ -52,6 +52,14 @@ public class Partido {
 		return resul;
 	}
 
+	public String getE1() {
+		return this.e1.getNombre();
+	}
+	
+	public String getE2() {
+		return this.e2.getNombre();
+	}
+	
 	
 	@Override
 	public String toString() {
