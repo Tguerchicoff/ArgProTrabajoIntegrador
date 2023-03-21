@@ -52,6 +52,7 @@ public class Partido {
 		return resul;
 	}
 
+	
 	@Override
 	public String toString() {
 		return "Partido [e1=" + e1 + ", e2=" + e2 + ", golesE1=" + golesE1 + ", golesE2=" + golesE2 + "]";

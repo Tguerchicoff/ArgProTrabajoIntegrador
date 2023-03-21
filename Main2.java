@@ -7,6 +7,8 @@ public class Main2 {
 		Programa2 pr2 = new Programa2();
 		
 		
+		
+		
 		Equipo Argentina = new Equipo("Argentina","Seleccion");
 		Equipo Arabia = new Equipo("Arabia","Seleccion");
 		Equipo Polonia = new Equipo("Polonia","Seleccion");

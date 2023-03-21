@@ -2,7 +2,6 @@ package trabajoIntegrador;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Scanner;
 
 
@@ -10,54 +9,32 @@ import java.util.Scanner;
 public class Programa2 {
 	Scanner sc = new Scanner(System.in);
 	private ArrayList<Equipo> equipos;
-	private ArrayList<Pronostico> pronosticos;
-	private ArrayList<Partido> partidos;
+	private ArrayList<Ronda> rondas;
 	private ArrayList<Persona> personas;
 	
-	
-	
+	final static int largoCorrecto = 4;
+	private int contador = 1;
 	private String resultadosFile;
 	private String pronosticosFile;
 	
 	
 	public Programa2() {
 		this.equipos = new ArrayList<>();
-		this.partidos = new ArrayList<>();
+		this.rondas = new ArrayList<>();
 		this.personas = new ArrayList<>();
 	}
 	
 	
 	public void solicitarPaths() {
+		solicitarResultados();
+		solicitarPronostico();
 		
-		System.out.println("Ingrese el path de los resultados: ");
-		resultadosFile = sc.nextLine();
-		File resul = new File(resultadosFile);
-		try {
-			Scanner scanR = new Scanner(resul);
-			while(scanR.hasNextLine()) {
-				
-				//scaneo la linea
-				String linea = scanR.nextLine();
-				//genero el array que necesito
-				String[] separado = new String[4];
-				//spliteo la linea y la agrego al array
-				separado = linea.split("\\s*,\\s*");
-				System.out.println(separado[3]);
-				System.out.println(separado[1].equals("Argentina"));
-					if(buscarEquipo(separado[1]) && buscarEquipo(separado[3])) {
-						// si los equipos existen genero el partido
-						Partido parti = new Partido(separado[0], darEquipo(separado[1]), separado[2], darEquipo(separado[3]));
-						partidos.add(parti);
-					} else {
-						System.out.println("Alguno de los equipo es inexsistente, por favor verifique");
-				
-				}
-			}
+
+		
+	}
+
 	
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-		}
-		
+	private void solicitarPronostico() {
 		try {
 		System.out.println("Ingrese el path de los pronosticos: ");
 		pronosticosFile = sc.nextLine();
@@ -71,38 +48,116 @@ public class Programa2 {
 				String[] separadoP = new String[4];
 				//spliteo la linea y la agrego al array
 				separadoP = linea.split("\\s*,\\s*");
-				if(!partidos.isEmpty()) {
-					if(buscarPartido(Integer.parseInt(separadoP[0])) != null) {
-						Partido p = buscarPartido(Integer.parseInt(separadoP[0]));
-						if(p.equipoParticipa(separadoP[1])) {
+				if(!rondas.isEmpty()) {
+					if(verificarArray(separadoP)) {
+					if(buscarPartido(separadoP[0],separadoP[2]) != null) {
+						Partido p = buscarPartido(separadoP[0],separadoP[2]);
+						//if(p.equipoParticipa(separadoP[0])) {
 						// si los equipos existen genero el partido
-						Pronostico pronostic = new Pronostico(p, darEquipo(separadoP[1]), separadoP[2]);
+						Pronostico pronostic = new Pronostico(p, darEquipo(separadoP[0]), separadoP[1]);
 						if(buscarPersona(separadoP[3])==null) {
 							agregarPersona(separadoP[3]);
 						}
 						cargarPronosticoAPersona(separadoP[3], pronostic);
+						}else {
+							System.out.println("El equipo no participa de tal partido");
+						}
 					}else {
-						System.out.println("El equipo no participa de tal partido");
+						System.out.println("Datos insuficientes");
 					}
 					}else {
 						System.out.println("Partido inexsistente, por favor verifique");
 					}
 				}
-			}
+			
 				
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
 		}
-		
-
-		
 	}
+		
+	
+	
+	private void solicitarResultados() {
+		System.out.println("Ingrese el path de los resultados: ");
+		resultadosFile = sc.nextLine();
+		File resul = new File(resultadosFile);
+		try {
+			Scanner scanR = new Scanner(resul);
+			Ronda nuevaRonda = new Ronda(contador);
+			while(scanR.hasNextLine()) {
+				//scaneo la linea
+				String linea = scanR.nextLine();
+				//genero el array que necesito
+				String[] separado = new String[4];
+				//spliteo la linea y la agrego al array
+				separado = linea.split("\\s*,\\s*");
+				if(verificarArray(separado)) {
+						if(buscarEquipo(separado[1]) && buscarEquipo(separado[3])) {
+							if(esInt(separado[0])&& esInt(separado[2])) {
+							// si los equipos existen genero el partido
+							Partido parti = new Partido(separado[0], darEquipo(separado[1]), separado[2], darEquipo(separado[3]));
+							nuevaRonda.agregarPartido(parti);
+						}else {
+							System.out.println("Ingresaste valores que no son enteros loko!!");
+							}
+						} else {
+							System.out.println("Alguno de los equipo es inexsistente, por favor verifique");
+					
+					}
+				}else {
+					System.out.println("Datos incorrectos, por favor verifique");
+			}
+			}
+			rondas.add(nuevaRonda);
+		} catch (FileNotFoundException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	
+	
+	private Partido buscarPartido(String e1, String e2) {
+        int i = 0;
+		Partido parti = null;
+        while(i < rondas.size() && parti == null) {
+        	Ronda rondaBuscando = rondas.get(i);
+        	parti = rondaBuscando.buscarPartido(e1, e2);
+        	i++;
+        		}
+        
+        return parti;
+	}
+	
+	private boolean verificarLargo(String[] array) {
+		boolean resultado = true;
+		if(array.length != largoCorrecto) {
+			resultado = false;
+		}
+		
+		return resultado;
+	}
+	
+	private boolean verificarArray(String[] array) {
+		boolean verificado = verificarLargo(array);
+		if(verificado) {
+			for (String str : array) {
+				if(str == null || str.length() == 0) {
+					verificado = false;
+				}
+			}
+		}
+	return verificado;
+	}
+		
+		
 	
 	public void jugar() {
 		for (Persona pp : personas) {
 			pp.resultado();
 		}
 	}
+	
 	
 	public void cargarPronosticoAPersona(String nombre, Pronostico p) {
 		Persona per = buscarPersona(nombre);
@@ -111,16 +166,7 @@ public class Programa2 {
 	}
 	
 	
-	private Partido buscarPartido(int num) {
-		Partido p = null;
-		num = num -1;
-		if(!partidos.isEmpty()) {
-			if(partidos.get(num) != null) {
-				p  = partidos.get(num);
-			}
-		}
-		return p;
-	}
+
 	
 	public void mostrarEquipos() {
 		for (Equipo equipo : equipos) {
@@ -147,6 +193,17 @@ public class Programa2 {
 		}
 	}
 	
+	private boolean esInt(String cadena) {
+		//Recibe string xq levanta la cadena del archivo
+	    boolean es = true;
+		try {
+	        Integer.parseInt(cadena);
+	        
+	    } catch (NumberFormatException e1) {
+	    	es =  false;
+	    }
+	    return es;
+	}
 	
 	private Persona buscarPersona(String nombre) {
 		int i = 0;
@@ -177,7 +234,7 @@ public class Programa2 {
 		while(i < equipos.size() && !encontrado) {
 			if(equipos.get(i).getNombre().equals(nombre)) {
 				encontrado = true;
-				System.out.println("Encontre el equipo!");
+				//System.out.println("Encontre el equipo!");
 			} else {
 				i++;
 			}		
