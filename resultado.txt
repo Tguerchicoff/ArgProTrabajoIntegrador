@@ -1,0 +1,3 @@
+1,Argentina,2,Arabia
+2,Argentina,0,Mexico
+2,Argentina,0,Polonia
