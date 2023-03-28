@@ -1,4 +1,4 @@
-package trabajoIntegrador;
+package clases;
 
 public class Equipo {
 	private String nombre;

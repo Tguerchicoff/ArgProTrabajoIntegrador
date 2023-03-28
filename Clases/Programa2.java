@@ -1,4 +1,4 @@
-package trabajoIntegrador;
+package clases;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -273,8 +273,8 @@ public class Programa2 {
 		if(!buscarEquipo(nombre)) {
 			Equipo equi = new Equipo(nombre, "A confirmar");
 			equipos.add(equi);
-		}else {
-		 System.out.println("El equipo ya esta registrado");
+		//}else {
+		// System.out.println("El equipo ya esta registrado");
 		}
 	}
 	
@@ -282,8 +282,8 @@ public class Programa2 {
 	public void agregarEquipo(Equipo e) {
 		if(!buscarEquipo(e.getNombre())) {
 		equipos.add(e);
-		}else {
-		 System.out.println("El equipo ya esta registrado");
+		//}else {
+		// System.out.println("El equipo ya esta registrado");
 		}
 	}
 

@@ -1,4 +1,4 @@
-package trabajoIntegrador;
+import clases.Programa2;
 
 public class Main2 {
 

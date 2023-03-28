@@ -1,4 +1,4 @@
-package trabajoIntegrador;
+package clases;
 import java.util.ArrayList;
 
 

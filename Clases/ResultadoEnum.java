@@ -1,4 +1,4 @@
-package trabajoIntegrador;
+package clases;
 
 public enum ResultadoEnum {
 	ganador(5), perdedor(0), empate(1), error(0);
