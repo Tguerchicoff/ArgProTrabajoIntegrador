@@ -1,4 +1,5 @@
 package clases;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class Programa2 {
 	private void solicitarResultados() {
 		
 		System.out.println("Ingrese el path de los resultados: ");
+		//path = D:\Eclipse\eclipse-workspace\programaDeportivo\src\main\resources\resultado.txt
 		resultadosFile = sc.nextLine();	
 		File resul = new File(resultadosFile);
 		try {
@@ -86,6 +88,8 @@ public class Programa2 {
 	private void solicitarPronostico() {
 		try {
 		System.out.println("Ingrese el path de los pronosticos: ");
+		//path = D:\Eclipse\eclipse-workspace\programaDeportivo\src\main\resources\ronda.txt
+	
 		pronosticosFile = sc.nextLine();
 		File prono = new File(pronosticosFile);
 			scanP = new Scanner(prono);

@@ -1,5 +1,6 @@
 package clases;
 
+
 public class Partido {
 	private Equipo e1;
 	private Equipo e2;

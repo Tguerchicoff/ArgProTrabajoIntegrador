@@ -1,4 +1,5 @@
-import clases.Programa2;
+package clases;
+
 
 public class Main2 {
 
