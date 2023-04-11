@@ -18,7 +18,6 @@ public class Main2 {
 //		pr2.agregarEquipo(Arabia);
 //		pr2.agregarEquipo(Polonia);
 //		pr2.agregarEquipo(Mexico);
-		
 		pr2.mostrarEquipos();
 		pr2.inicializar();
 		

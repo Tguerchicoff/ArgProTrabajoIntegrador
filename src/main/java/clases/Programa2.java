@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
-
+import java.sql.*;
 
 
 public class Programa2 {
@@ -17,9 +17,12 @@ public class Programa2 {
 	final static int largoCorrecto = 4;
 	private int contador = 1;
 	private String resultadosFile;
+	private String conexionYPuntosFile;
 	private String pronosticosFile;
 	private int PuntosRachaRonda;
 	private int PuntosRachaFase;
+	private File resul;
+	private File conexionYPuntos;
 	
 	Scanner sc = new Scanner(System.in);
 	Scanner input = new Scanner(System.in);
@@ -33,9 +36,10 @@ public class Programa2 {
 	}
 	
 	public void inicializar() {
-		solicitarValoresResultados();
 		solicitarResultados();
-		solicitarPronostico();
+		solicitarValoresConexion();
+		
+		//solicitarPronostico();
 		cerrarScanners();
 		
 	}
@@ -46,7 +50,7 @@ public class Programa2 {
 		System.out.println("Ingrese el path de los resultados: ");
 		//path = D:\Eclipse\eclipse-workspace\programaDeportivo\src\main\resources\resultado.txt
 		resultadosFile = sc.nextLine();	
-		File resul = new File(resultadosFile);
+		resul = new File(resultadosFile);
 		try {
 			scanR = new Scanner(resul);
 			Ronda nuevaRonda = new Ronda(contador);
@@ -133,24 +137,61 @@ public class Programa2 {
 		}
 	}
 	
-	public void solicitarValoresResultados() {
+	public void solicitarValoresConexion() {
+		System.out.println("Ingrese el path de la conexión y el valor de los puntajes: ");
+		//path = D:\Eclipse\eclipse-workspace\programaDeportivo\src\main\resources\conexionYPuntos.txt
+		conexionYPuntosFile= sc.nextLine();	
+		conexionYPuntos = new File(conexionYPuntosFile);
 		
-		//PIDE LOS VALORES DE LOS DISTINTOS TIPOS DE PUNTOS (SOLICITADO)
-		System.out.println("Ingrese el valor de cada resultado ganador");
-		ResultadoEnum.ganador.setValor(input.nextInt());
+		try {
+			Scanner scanC = new Scanner(conexionYPuntos);
+			while(scanC.hasNextLine()) {
+				//ESCANEO LA LINEA
+				String linea = scanC.nextLine();
+				//GENERO UN ARRAY
+				String[] separadoConexion = new String[9];
+				//SEPARO POR COMAS EN EL ARRAY, OCUPANDO EL TOTAL DE LAS POSICIONES
+				separadoConexion = linea.split("\\s*,\\s*");
+				if(verificarArray(separadoConexion, 10)) {
+					solicitarPronosticoDB(separadoConexion[0],separadoConexion[1],separadoConexion[2], separadoConexion[3], separadoConexion[4]);
+					ResultadoEnum.ganador.setValor(Integer.parseInt(separadoConexion[5]));
+					ResultadoEnum.empate.setValor(Integer.parseInt(separadoConexion[6]));
+					ResultadoEnum.perdedor.setValor(Integer.parseInt(separadoConexion[7]));
+					PuntosRachaRonda = Integer.parseInt(separadoConexion[8]);
+					PuntosRachaFase = Integer.parseInt(separadoConexion[9]);
+				}else {
+					System.out.println("Datos incorrectos, por favor verifique");
+				}
+			}
+			
+
+		} catch (FileNotFoundException e) {
+			System.out.println("Ingresaste algo mal..." + e.getMessage());
+		}
 		
-		System.out.println("Ingrese el valor de cada resultado de empate");
-		ResultadoEnum.empate.setValor(input.nextInt());
 		
-		System.out.println("Ingrese el valor de cada resultado perdido");
-		ResultadoEnum.perdedor.setValor(input.nextInt());
 		
-		System.out.println("Ingrese el valor por racha en ronda");
-		PuntosRachaRonda = input.nextInt();
-		
-		System.out.println("Ingrese el valor por racha en fase");
-		PuntosRachaFase = input.nextInt();
-		
+//		
+//		//PIDE LOS VALORES DE LOS DISTINTOS TIPOS DE PUNTOS (SOLICITADO)
+//		System.out.println("Ingrese el valor de cada resultado ganador");
+//		//array[5]
+//		ResultadoEnum.ganador.setValor(input.nextInt());
+//		
+//		System.out.println("Ingrese el valor de cada resultado de empate");
+//		//array[6]
+//		ResultadoEnum.empate.setValor(input.nextInt());
+//		
+//		System.out.println("Ingrese el valor de cada resultado perdido");
+//		//array[7]
+//		ResultadoEnum.perdedor.setValor(input.nextInt());
+//		
+//		System.out.println("Ingrese el valor por racha en ronda");
+//		//array[8]
+//		PuntosRachaRonda = input.nextInt();
+//		//array[9]
+//		System.out.println("Ingrese el valor por racha en fase");
+//		PuntosRachaFase = input.nextInt();
+//		
 	}
 	
 	private Partido buscarPartido(String e1, String e2) {
@@ -322,12 +363,76 @@ public class Programa2 {
 		return encontrado;
 	}
 	
+	private void solicitarPronosticoDB(String host1, String puerto1, String nombreBD1, String usuario1, String contrasena1 ) {
+		  try {
+		    Scanner sc = new Scanner(System.in);
+
+		    System.out.println("Ingrese los datos de conexión a la base de datos: ");
+		    System.out.println("Host: ");
+		    //array[0]
+		    String host = host1;
+		    System.out.println("Puerto: ");
+		  //array[1]
+		    String puerto = puerto1;
+		    System.out.println("Nombre de la base de datos: ");
+		  //array[2]
+		    String nombreBD = nombreBD1;
+		    System.out.println("Nombre de usuario: ");
+		  //array[3]
+		    String usuario =  usuario1;
+		    System.out.println("Contraseña: ");
+		  //array[4]
+		    String contrasena = contrasena1;
+
+		    // Conexión a la base de datos
+		    String url = "jdbc:mysql://" + host + ":" + puerto + "/" + nombreBD;
+		    Connection conexion = DriverManager.getConnection(url, usuario, contrasena);
+
+		    System.out.println("Conexión exitosa a la base de datos " + nombreBD);
+
+		    // Consulta de pronósticos
+		    Statement consulta = conexion.createStatement();
+		    ResultSet resultado = consulta.executeQuery("SELECT * FROM pronosticos");
+
+		    while (resultado.next()) {
+		      String equipo1 = resultado.getString("nombreEquipo1");
+		      String resultadoEquipo = resultado.getString("resultadoEquipo");
+		      String equipo2 = resultado.getString("nombreEquipo2");
+		      String persona = resultado.getString("nombrePersona");
+
+		      // Buscar partido
+		      Partido partido = buscarPartido(equipo1, equipo2);
+
+		      if (partido != null) {
+		        // Generar pronóstico
+		        Equipo eq1 = darEquipo(equipo1);
+		        Equipo eq2 = darEquipo(equipo2);
+		        Pronostico pronostico = new Pronostico(partido, eq1, resultadoEquipo);
+
+		        // Cargar pronóstico a la persona
+		        agregarPersona(persona);
+		        cargarPronosticoAPersona(persona, pronostico);
+		      } else {
+		        System.out.println("El partido entre " + equipo1 + " y " + equipo2 + " no existe.");
+		      }
+		    }
+
+		    resultado.close();
+		    consulta.close();
+		    conexion.close();
+		    sc.close();
+
+		  } catch (SQLException e) {
+		    System.out.println("Error al conectarse a la base de datos: " + e.getMessage());
+		  }
+		}
+	
 	private void cerrarScanners() {
 		//cierro todos los scanners que utilice en el programa
 		sc.close();
 		input.close();
 		scanR.close();
-		scanP.close();
+		//scanP.close();
 	}
 	
 }	
