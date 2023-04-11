@@ -18,6 +18,10 @@ public class Ronda {
 		partidos.add(p);
 	}
 	
+	public ArrayList<Partido> getPartidos(){
+		return partidos;
+	}
+	
 	public int cantPartidos() {
 		int cantidad = 0;
 		if(this.partidos != null) {
@@ -48,4 +52,11 @@ public class Ronda {
 
 		return puntos;
 	}
+
+	@Override
+	public String toString() {
+		return "Ronda [nro=" + nro + ", partidos=" + partidos + "]";
+	}
 }
+
+

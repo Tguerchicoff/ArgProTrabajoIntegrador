@@ -13,9 +13,6 @@ public class Programa2 {
 	private ArrayList<Ronda> fase;
 	private ArrayList<Persona> personas;
 	
-	
-	final static int largoCorrecto = 4;
-	private int contador = 1;
 	private String resultadosFile;
 	private String pronosticosFile;
 	private int PuntosRachaRonda;
@@ -49,34 +46,34 @@ public class Programa2 {
 		File resul = new File(resultadosFile);
 		try {
 			scanR = new Scanner(resul);
-			Ronda nuevaRonda = new Ronda(contador);
-			contador++;
 			while(scanR.hasNextLine()) {
 				//ESCANEO LA LINEA
 				String linea = scanR.nextLine();
 				//GENERO UN ARRAY
-				String[] separado = new String[4];
+				String[] separado = new String[5];
 				//SEPARO POR COMAS EN EL ARRAY, OCUPANDO EL TOTAL DE LAS POSICIONES
 				separado = linea.split("\\s*,\\s*");
-				if(verificarArray(separado)) {
+				if(verificarArray(separado, 5)) {
+					Ronda nuevaRonda = buscarRonda(Integer.parseInt(separado[0]));
 					//ESTE METODO CREA EL EQUIPO, Y SI YA EXISTE NO HACE NADA	
-					agregarEquipo(separado[1]);
-					agregarEquipo(separado[3]) ;
+					agregarEquipo(separado[2]);
+					agregarEquipo(separado[4]) ;
 					//VERIFICO (SOLICITADO) QUE SE INGRESEN INT EN LA CANT DE GOLES
-					if(esInt(separado[0])&& esInt(separado[2])) {	
-						Partido parti = new Partido(separado[0], darEquipo(separado[1]), separado[2], darEquipo(separado[3]));
+					if(esInt(separado[1])&& esInt(separado[3])) {	
+						Partido parti = new Partido(separado[1], darEquipo(separado[2]), separado[3], darEquipo(separado[4]));
 						//CREO EL PARTIDO Y LO AGREGO A LA RONDA
 						nuevaRonda.agregarPartido(parti);
 						}else {
 							System.out.println("Ingresaste valores que no son enteros loko!!");
 						}
+					fase.add(nuevaRonda);
+
 				}else {
 					System.out.println("Datos incorrectos, por favor verifique");
 				}
 			}
 			//AGREGO LA RONDA A LA FASE (CONJUNTO DE RONDAS)
-			fase.add(nuevaRonda);
-			scanR.close();
+
 		} catch (FileNotFoundException e) {
 			System.out.println("Ingresaste algo mal..." + e.getMessage());
 		}
@@ -104,7 +101,7 @@ public class Programa2 {
 				//VERIFICO QUE LA FASE TENGA POR LO MENOS 1 RONDA
 				if(!fase.isEmpty()) {
 					//VERIFICO QUE EL ARRAY CONTENGA LA CANTIDAD DE DATOS QUE NECESITO
-					if(verificarArray(separadoP)) {
+					if(verificarArray(separadoP, 4)) {
 						//BUSCO EL PARTIDO A PARTIR DE LOS 2 EQUIPOS PARTICIPANTES
 					if(buscarPartido(separadoP[0],separadoP[2]) != null) {
 						Partido p = buscarPartido(separadoP[0],separadoP[2]);
@@ -166,17 +163,17 @@ public class Programa2 {
 	}
 	
 	
-	private boolean verificarLargo(String[] array) {
+	private boolean verificarLargo(String[] array, int largo) {
 		boolean resultado = true;
-		if(array.length != largoCorrecto) {
+		if(array.length != largo) {
 			resultado = false;
 		}		
 		return resultado;
 	}
 
 	
-	private boolean verificarArray(String[] array) {
-		boolean verificado = verificarLargo(array);
+	private boolean verificarArray(String[] array, int largo) {
+		boolean verificado = verificarLargo(array, largo);
 		if(verificado) {
 			for (String str : array) {
 				if(str == null || str.length() == 0) {
@@ -186,7 +183,46 @@ public class Programa2 {
 		}
 	return verificado;
 	}	
+	
+	//no se usa
+	private int cantFases() {
+		ArrayList<Integer> ids = new ArrayList<>();
+		for (Ronda r : fase) {
+			if(!buscarId(ids, r.getNro())) {
+				ids.add(r.getNro());
+			}
+		}
+		return ids.size();
+	}
+	//no se usa
+	private Ronda buscarRonda(int numRonda) {
+		Ronda devolver = null;
+		int i = 0;
+		while((devolver == null) && i < fase.size()) {
+			if(fase.get(i).getNro() == numRonda) {
+				devolver = fase.get(i);
+			}
+		}
+		if(devolver == null) {
+			devolver = new Ronda(numRonda);
+		}
 		
+		return devolver;
+	}
+	//no se usa
+	private boolean buscarId(ArrayList<Integer> array, int id) {
+		boolean encontrado = false;
+		int i = 0;
+		while(!encontrado && i < array.size()) {
+			if(array.get(i) == id) {
+				encontrado = true;
+			}
+			else {
+				i++;
+			}
+		}
+		return encontrado;
+	}
 	
 	public void jugar() {
 		for (Persona pp : personas) {
@@ -197,9 +233,10 @@ public class Programa2 {
 				if(r.cantPartidos() <= pp.getRacha()) {
 					pp.setPuntos(pp.getPuntos() + this.PuntosRachaRonda);
 				}
-				if((this.fase.size() > 1) && (sumaRondas == pp.getRacha())) {
-					pp.setPuntos(pp.getPuntos() + this.PuntosRachaFase);
-				}
+
+			}
+			if((this.fase.size() > 1) && (sumaRondas == pp.getRacha())) {
+				pp.setPuntos(pp.getPuntos() + this.PuntosRachaFase);
 			}
 
 			System.out.println(fase.get(0).cantPartidos());
