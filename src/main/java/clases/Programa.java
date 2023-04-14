@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.sql.*;
 
 
 public class Programa {
@@ -35,12 +34,11 @@ public class Programa {
 		solicitarResultados();
 		solicitarValoresConexion();
 		cerrarScanners();
-		
+		jugar();
 	}
 
 	
 	private void solicitarResultados() {
-		
 		System.out.println("Ingrese el path de los resultados: ");
 		//path = D:\Eclipse\eclipse-workspace\programaDeportivo\src\main\resources\resultado.txt
 		resultadosFile = sc.nextLine();	
@@ -57,11 +55,11 @@ public class Programa {
 				if(Verificador.verificarArray(separado, 5)) {
 					Ronda nuevaRonda = Buscador.buscarRonda(Integer.parseInt(separado[0]), fase);
 					//ESTE METODO CREA EL EQUIPO, Y SI YA EXISTE NO HACE NADA	
-					agregarEquipo(separado[2]);
-					agregarEquipo(separado[4]) ;
+					EquipoHandler.agregarEquipo(separado[2], equipos);
+					EquipoHandler.agregarEquipo(separado[4], equipos);
 					//VERIFICO (SOLICITADO) QUE SE INGRESEN INT EN LA CANT DE GOLES
-					if(esInt(separado[1])&& esInt(separado[3])) {	
-						Partido parti = new Partido(separado[1], darEquipo(separado[2]), separado[3], darEquipo(separado[4]));
+					if(Verificador.esInt(separado[1])&& Verificador.esInt(separado[3])) {	
+						Partido parti = new Partido(separado[1], EquipoHandler.darEquipo(separado[2], equipos), separado[3], EquipoHandler.darEquipo(separado[4], equipos));
 						//CREO EL PARTIDO Y LO AGREGO A LA RONDA
 						nuevaRonda.agregarPartido(parti);
 						}else {
@@ -100,7 +98,7 @@ public class Programa {
 				//SEPARO POR COMAS EN EL ARRAY, OCUPANDO EL TOTAL DE LAS POSICIONES
 				separadoConexion = linea.split("\\s*,\\s*");
 				if(Verificador.verificarArray(separadoConexion, 10)) {
-					solicitarPronosticoDB(separadoConexion[0],separadoConexion[1],separadoConexion[2], separadoConexion[3], separadoConexion[4]);
+					ConectorBaseDeDatos.conectarBd(separadoConexion[0],separadoConexion[1],separadoConexion[2], separadoConexion[3], separadoConexion[4], fase, personas, equipos);
 					ResultadoEnum.ganador.setValor(Integer.parseInt(separadoConexion[5]));
 					ResultadoEnum.empate.setValor(Integer.parseInt(separadoConexion[6]));
 					ResultadoEnum.perdedor.setValor(Integer.parseInt(separadoConexion[7]));
@@ -116,14 +114,9 @@ public class Programa {
 			System.out.println("Ingresaste algo mal..." + e.getMessage());
 		}	
 	}
-	
 
 	
-
-
-
-	
-	public void jugar() {
+	private void jugar() {
 		for (Persona pp : personas) {
 			pp.jugar();
 			int sumaRondas = 0;
@@ -137,7 +130,6 @@ public class Programa {
 			if((this.fase.size() > 1) && (sumaRondas == pp.getRacha())) {
 				pp.setPuntos(pp.getPuntos() + this.PuntosRachaFase);
 			}
-
 			
 			imprimirResultado(pp.getNombre(),pp.getPuntos(),pp.getCantAciertos());
 		}
@@ -148,112 +140,7 @@ public class Programa {
 		System.out.println("-----------------------------------------");
 	}
 	
-	
-	public void cargarPronosticoAPersona(String nombre, Pronostico p) {
-		Persona per = Buscador.buscarPersona(nombre, personas);
-		per.agregarPronostico(p);
-		
-	}
-	
-	public void agregarPersona(String nombre) {
-		if(Buscador.buscarPersona(nombre, personas) == null) {
-			Persona p = new Persona(nombre);
-			personas.add(p);
-		}
-	}
-	
-	
-	private boolean esInt(String cadena) {
-		//Recibe string xq levanta la cadena del archivo
-	    boolean es = true;
-		try {
-	        Integer.parseInt(cadena);
-	        
-	    } catch (NumberFormatException e1) {
-	    	es =  false;
-	    }
-	return es;
-	}
-	
-	
-	public void agregarEquipo(String nombre) {
-		if(!Buscador.buscarEquipo(nombre, equipos)) {
-			Equipo equi = new Equipo(nombre, "A confirmar");
-			equipos.add(equi);
-		}
-	}
-	
-	
-	public void agregarEquipo(Equipo e) {
-		if(!Buscador.buscarEquipo(e.getNombre(), equipos)) {
-		equipos.add(e);
-		}
-	}
-	
-	private Equipo darEquipo(String nombre) {
-		int i = 0;
-		Equipo encontrado = null;
-		
-		while(i < equipos.size() && encontrado == null) {
-			if(equipos.get(i).getNombre().equals(nombre) ) {
-				encontrado = equipos.get(i);
-			} else {
-				i++;
-			}		
-		}
-	return encontrado;
-	}
-	
-	private void solicitarPronosticoDB(String host1, String puerto1, String nombreBD1, String usuario1, String contrasena1 ) {
-		  try {
-		    String host = host1;
-		    String puerto = puerto1;
-		    String nombreBD = nombreBD1;
-		    String usuario =  usuario1;
-		    String contrasena = contrasena1;
-
-		    // CONEXION A LA BASE
-		    String url = "jdbc:mysql://" + host + ":" + puerto + "/" + nombreBD;
-		    Connection conexion = DriverManager.getConnection(url, usuario, contrasena);
-
-		    System.out.println("Conexión exitosa a la base de datos " + nombreBD + "\n");
-		    
-
-		    // CONSULTA DE PRONOSTICOS
-		    Statement consulta = conexion.createStatement();
-		    ResultSet resultado = consulta.executeQuery("SELECT * FROM pronosticos");
-
-		    while (resultado.next()) {
-		    	String equipo1 = resultado.getString("nombreEquipo1");
-		        String resultadoEquipo = resultado.getString("resultadoEquipo");
-		        String equipo2 = resultado.getString("nombreEquipo2");
-		        String persona = resultado.getString("nombrePersona");
-
-		        Partido partido = Buscador.buscarPartido(equipo1, equipo2, fase);
-
-		        if (partido != null) {
-		        	Equipo eq1 = darEquipo(equipo1);
-		        	Pronostico pronostico = new Pronostico(partido, eq1, resultadoEquipo);
-
-		        	agregarPersona(persona);
-		        	cargarPronosticoAPersona(persona, pronostico);
-		        } else {
-		        	System.out.println("El partido entre " + equipo1 + " y " + equipo2 + " no existe.");
-		        }
-		    }
-
-		    resultado.close();
-		    consulta.close();
-		    conexion.close();
-		    sc.close();
-
-		  } catch (SQLException e) {
-		    System.out.println("Error al conectarse a la base de datos: " + e.getMessage());
-		  }
-		}
-	
 	private void cerrarScanners() {
-		//CIERRO LOS SCANNERS
 		sc.close();
 		input.close();
 		scanR.close();

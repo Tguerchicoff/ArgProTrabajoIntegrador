@@ -21,5 +21,17 @@ public class Verificador {
 		}
 	return verificado;
 	}
+
+	public static boolean esInt(String cadena) {
+		//Recibe string xq levanta la cadena del archivo
+	    boolean es = true;
+		try {
+	        Integer.parseInt(cadena);
+	        
+	    } catch (NumberFormatException e1) {
+	    	es =  false;
+	    }
+	return es;
+	}
 	
 }
