@@ -31,19 +31,26 @@ public class Programa {
 	}
 	
 	public void inicializar() {
-		solicitarResultados();
-		solicitarValoresConexion();
-		cerrarScanners();
-		jugar();
+		if(solicitarResultados()) {
+			if(solicitarValoresConexion()) {
+				jugar();
+				cerrarScanners();
+			}
+		}
+
 	}
 
 	
-	private void solicitarResultados() {
+	private boolean solicitarResultados() {
+		boolean ok = true;
 		System.out.println("Ingrese el path de los resultados: ");
 		//path = D:\Eclipse\eclipse-workspace\programaDeportivo\src\main\resources\resultado.txt
-		resultadosFile = sc.nextLine();	
+		resultadosFile = sc.nextLine();
 		resul = new File(resultadosFile);
 		try {
+			if(resul.length() == 0) {
+				throw new IllegalArgumentException("El path de resultados no puede estar vacío");
+			}
 			scanR = new Scanner(resul);
 			while(scanR.hasNextLine()) {
 				//ESCANEO LA LINEA
@@ -62,33 +69,39 @@ public class Programa {
 						Partido parti = new Partido(separado[1], EquipoHandler.darEquipo(separado[2], equipos), separado[3], EquipoHandler.darEquipo(separado[4], equipos));
 						//CREO EL PARTIDO Y LO AGREGO A LA RONDA
 						nuevaRonda.agregarPartido(parti);
-						}else {
-							System.out.println("Ingresaste valores que no son enteros loko!!");
-						}
-					fase.add(nuevaRonda);
-
+					}else {
+						System.out.println("Ingresaste valores que no son enteros loko!!");
+						ok = false;
+					}
+				fase.add(nuevaRonda);
 				}else {
 					System.out.println("Datos incorrectos, por favor verifique");
+					ok = false;
 				}
-			}
-			
+			}	
 
 		} catch (FileNotFoundException e) {
+			ok = false;
 			System.out.println("Ingresaste algo mal..." + e.getMessage());
+		} catch (IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+			ok = false;
 		}
-		
-		
-
+		return ok;
 	}
 	
 	
-	public void solicitarValoresConexion() {
+	public boolean solicitarValoresConexion() {
+		boolean ok = true;
 		System.out.println("Ingrese el path de la conexión y el valor de los puntajes: ");
 		//path = D:\Eclipse\eclipse-workspace\programaDeportivo\src\main\resources\conexionYPuntos.txt
 		conexionYPuntosFile= sc.nextLine();	
 		conexionYPuntos = new File(conexionYPuntosFile);
-		
 		try {
+			if(conexionYPuntos.length() == 0) {
+				ok = false;
+				throw new IllegalArgumentException("El path de los valores de conexion no puede estar vacío");
+			}
 			scanC = new Scanner(conexionYPuntos);
 			while(scanC.hasNextLine()) {
 				//ESCANEO LA LINEA
@@ -105,14 +118,18 @@ public class Programa {
 					PuntosRachaRonda = Integer.parseInt(separadoConexion[8]);
 					PuntosRachaFase = Integer.parseInt(separadoConexion[9]);
 				}else {
+					ok = false;
 					System.out.println("Datos incorrectos, por favor verifique");
 				}
 			}
-			
-
 		} catch (FileNotFoundException e) {
+			ok = false;
 			System.out.println("Ingresaste algo mal..." + e.getMessage());
-		}	
+		} catch (IllegalArgumentException e) {
+			ok = false;
+			System.out.println(e.getMessage());
+		}
+		return ok;
 	}
 
 	
@@ -125,12 +142,10 @@ public class Programa {
 				if(r.cantPartidos() <= pp.getRacha()) {
 					pp.setPuntos(pp.getPuntos() + this.PuntosRachaRonda);
 				}
-
 			}
 			if((this.fase.size() > 1) && (sumaRondas == pp.getRacha())) {
 				pp.setPuntos(pp.getPuntos() + this.PuntosRachaFase);
-			}
-			
+			}	
 			imprimirResultado(pp.getNombre(),pp.getPuntos(),pp.getCantAciertos());
 		}
 	}

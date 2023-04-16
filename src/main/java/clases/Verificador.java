@@ -26,8 +26,7 @@ public class Verificador {
 		//Recibe string xq levanta la cadena del archivo
 	    boolean es = true;
 		try {
-	        Integer.parseInt(cadena);
-	        
+	        Integer.parseInt(cadena);    
 	    } catch (NumberFormatException e1) {
 	    	es =  false;
 	    }
