@@ -1,1 +1,1 @@
-localhost,3306,pronosticosdeportivos,root,root,1,0,0,1,10
+localhost,3306,pronosticosdeportivos,root,root,1,1,1,1,0

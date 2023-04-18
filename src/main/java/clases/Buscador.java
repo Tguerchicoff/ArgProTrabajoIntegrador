@@ -19,20 +19,21 @@ public class Buscador {
 	
 	
 	public static Ronda buscarRonda(int numRonda, ArrayList<Ronda> fase) {
-		Ronda devolver = null;
-		int i = 0;
-		while((devolver == null) && i < fase.size()) {
-			if(fase.get(i).getNro() == numRonda) {
-				devolver = fase.get(i);
-			}
-		}
-		if(devolver == null) {
-			devolver = new Ronda(numRonda);
-		}
-		
-		return devolver;
+	    Ronda ronda = null;
+	    int i = 0;
+	    while(i<fase.size() && ronda == null) {
+	    	if(fase.get(i).getNro() == numRonda) {
+	    		ronda = fase.remove(i);
+	    		break;
+	    	}else {
+	    		i++;
+	    	}    	
+	    }	    
+	    if (ronda == null) {
+	        ronda = new Ronda(numRonda);
+	    }
+	    return ronda;
 	}
-	
 	
 	public static Persona buscarPersona(String nombre, ArrayList<Persona> personas) {
 		int i = 0;

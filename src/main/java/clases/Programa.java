@@ -37,7 +37,6 @@ public class Programa {
 				cerrarScanners();
 			}
 		}
-
 	}
 
 	
@@ -131,21 +130,37 @@ public class Programa {
 		}
 		return ok;
 	}
-
 	
+	private int cantPartidos() {
+		int cantidad = 0;
+		for (Ronda r : fase) {
+			for (int i = 0; i < r.cantPartidos(); i++) {
+				cantidad ++;
+			}
+		}
+		return cantidad;
+	}
+	
+	private int cantPartidosRonda(int i) {
+		Ronda r = fase.get(i);
+		return r.getPartidos().size();
+	}
+
 	private void jugar() {
+		System.out.println("Resultados finales: \n");
 		for (Persona pp : personas) {
 			pp.jugar();
-			int sumaRondas = 0;
-			for (Ronda r : fase) {
-				sumaRondas += r.cantPartidos();
-				if(r.cantPartidos() <= pp.getRacha()) {
+			
+			for(int i = 0; i < fase.size(); i++) {
+				int cantPartidosRonda = cantPartidosRonda(i);
+				if(cantPartidosRonda <= pp.getRacha()) {
 					pp.setPuntos(pp.getPuntos() + this.PuntosRachaRonda);
 				}
 			}
-			if((this.fase.size() > 1) && (sumaRondas == pp.getRacha())) {
+			if(cantPartidos() == pp.getCantAciertos() && (pp.getCantAciertos() == pp.getCantPronosticos())) {	
 				pp.setPuntos(pp.getPuntos() + this.PuntosRachaFase);
-			}	
+			}
+			
 			imprimirResultado(pp.getNombre(),pp.getPuntos(),pp.getCantAciertos());
 		}
 	}

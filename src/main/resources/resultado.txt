@@ -1,3 +1,7 @@
 1,1,Argentina,2,Arabia
-1,2,Argentina,0,Mexico
+1,2,Argentina,0,México
 1,2,Argentina,0,Polonia
+2,2,Argentina,0,Australia
+3,5,Argentina,3,Holanda
+4,3,Argentina,0,Croacia
+5,4,Argentina,3,Francia

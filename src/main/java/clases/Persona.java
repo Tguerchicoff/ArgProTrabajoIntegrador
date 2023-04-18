@@ -17,12 +17,13 @@ public class Persona {
 	
 	public void agregarPronostico(Pronostico p) {
 		pronosticos.add(p);
+
 	}
+	
 	
 	public void  jugar() {
 		puntos();
 	}
-	
 	
 	private void puntos() {
 		for (Pronostico pronostico : pronosticos) {
@@ -39,6 +40,10 @@ public class Persona {
 	
 	public int getPuntos() {
 		return this.puntos;
+	}
+	
+	public int getCantPronosticos() {
+		return this.pronosticos.size();
 	}
 	
 	public int getCantAciertos() {
