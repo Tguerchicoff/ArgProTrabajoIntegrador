@@ -38,7 +38,7 @@ CREATE TABLE `pronosticos` (
 
 LOCK TABLES `pronosticos` WRITE;
 /*!40000 ALTER TABLE `pronosticos` DISABLE KEYS */;
-INSERT INTO `pronosticos` VALUES (1,'Argentina','perdedor','Arabia','Tomas'),(2,'Argentina','ganador','México','Tomas'),(3,'Argentina','ganador','Polonia','Tomas'),(4,'Argentina','ganador','Australia','Tomas'),(5,'Argentina','ganador','Holanda','Tomas'),(6,'Argentina','ganador','Croacia','Tomas'),(7,'Argentina','ganador','Francia','Tomas'),(8,'Argentina','ganador','Australia','Joaquin'),(9,'Argentina','perdedor','Croacia','Joaquin'),(10,'Argentina','perdedor','Francia','Joaquin');
+INSERT INTO `pronosticos` VALUES (1,'Argentina','perdedor','Arabia','Tomas'),(2,'Argentina','ganador','México','Tomas'),(3,'Argentina','ganador','Polonia','Tomas'),(4,'Argentina','ganador','Australia','Tomas'),(5,'Argentina','ganador','Holanda','Tomas'),(6,'Argentina','ganador','Croacia','Tomas'),(7,'Argentina','ganador','Francia','Tomas'),(8,'Argentina','ganador','Australia','Diego'),(9,'Argentina','perdedor','Croacia','Diego'),(10,'Argentina','perdedor','Francia','Diego');
 /*!40000 ALTER TABLE `pronosticos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-18 14:54:22
+-- Dump completed on 2023-04-21 17:43:19
